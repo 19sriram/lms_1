@@ -24,6 +24,7 @@ const SiderDemo = () => {
   const history = useHistory();
   const Logout = ()=>{
     localStorage.clear();
+    sessionStorage.clear();
     history.push('/')
   }
   const [collapsed, setCollapsed] = useState(false);
@@ -31,15 +32,14 @@ const SiderDemo = () => {
   /*--settings menu -*/
 
   const menu = (
-    <Menu>
+    <Menu style={{alignContent:'center'}}>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-          Profile
-        </a>
-      </Menu.Item>
+        <br/>
+        <h3>{sessionStorage.getItem('email')}</h3>
+     </Menu.Item>
       <Menu.Item>
       <a target="_blank" onClick={Logout}>
-          Logout
+      <LogoutOutlined style={{color:'red'}}/> Logout 
         </a>
       </Menu.Item>
       
@@ -93,7 +93,7 @@ const SiderDemo = () => {
       <img style={{width: '7em'}} src="https://media.wired.com/photos/5926ffe47034dc5f91bed4e8/master/pass/google-logo.jpg"/>
       </div>
       <div className='layoutOptions'>
-      <Dropdown overlay={menu} placement="bottomRight" arrow>
+      <Dropdown overlay={menu} placement="bottomRight" arrow >
       <Button>Settings</Button>
     </Dropdown>
      

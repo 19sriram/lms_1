@@ -15,6 +15,7 @@ export default axios.create({
 export const jwtDecoder = (token: any)=>{
     try {
       let decodedValue = JSON.parse(atob(token.split('.')[1]));
+      sessionStorage.setItem('token',decodedValue); 
       assignedRole = decodedValue.role;
       decodedToken = decodedValue;
       return decodedValue;

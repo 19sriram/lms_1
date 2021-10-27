@@ -20,6 +20,9 @@ export const LoginComponent = () => {
     if (result === "Success" && status == 200) {
       localStorage.setItem("accessToken", accessToken);
       jwtDecoder(localStorage.getItem('accessToken'));
+      sessionStorage.setItem('token', JSON.stringify({...jwtDecoder(localStorage.getItem('accessToken'))}));
+      sessionStorage.setItem('email',JSON.parse(sessionStorage.token).email);
+      sessionStorage.setItem('username',JSON.parse(sessionStorage.token).firstname);
      history.push('/mainPage');
     } else {
       let errorMsg = response.message;
