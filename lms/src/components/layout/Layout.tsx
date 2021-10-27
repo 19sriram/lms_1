@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu, Breadcrumb, Dropdown, Button } from "antd";
 import {
   DesktopOutlined,
   UserOutlined,
@@ -28,6 +28,24 @@ const SiderDemo = () => {
   }
   const [collapsed, setCollapsed] = useState(false);
   const onCollapse = () => setCollapsed(!collapsed);
+  /*--settings menu -*/
+
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+          Profile
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+      <a target="_blank" onClick={Logout}>
+          Logout
+        </a>
+      </Menu.Item>
+      
+    </Menu>
+  );
+  /*-- end settings menu -*/
   return (
     <>
       <Router>
@@ -75,8 +93,12 @@ const SiderDemo = () => {
       <img style={{width: '7em'}} src="https://media.wired.com/photos/5926ffe47034dc5f91bed4e8/master/pass/google-logo.jpg"/>
       </div>
       <div className='layoutOptions'>
+      <Dropdown overlay={menu} placement="bottomRight" arrow>
+      <Button>Settings</Button>
+    </Dropdown>
      
-      <LogoutOutlined onClick={()=>Logout()}/>
+      {/* <LogoutOutlined onClick={()=>Logout()}/> */}
+
       </div>
       <div >
       </div>

@@ -9,6 +9,8 @@ import {
   Select,
   message,
   Popconfirm,
+  Row,
+  Col,
 } from "antd";
 import { Drawer, Button } from "antd";
 import { useEffect, useState } from "react";
@@ -26,7 +28,7 @@ const { Search } = Input;
 
 const LeadsComponent = () => {
   const [allLeads, setAllLeads] = useState([]);
-  const [selectedUser, setSelectedUser]: any = useState([]);
+  const [selectedLead, setSelectedLead]: any = useState([]);
   const [allRoles, setAllRoles] = useState([]);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -136,50 +138,33 @@ let leadValues:any = {};
     }
   };
 
-  const handleDeleteUser = () => {
-    let userInfo = { email: selectedUser.email };
 
-    try {
-      _deleteUser(userInfo).then((response) => {
-        if (response.result === "Success" && response.status == 200) {
-          message.success(response.message);
-        } else {
-          message.error(response.message);
-        }
-        setIsModalVisible(false);
-        defaultGetUser();
-        onDrawerClose();
-        form.resetFields();
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
 
-  const handleUserActivationStatus = (email, isActive) => {
+  // const handleUserActivationStatus = (email, isActive) => {
     
-    try {
-      _handleUseractivation(email, !isActive).then((response) => {
-        if (response.result === "Success" && response.status == 200) {
-          message.success(response.message);
-        } else {
-          message.error(response.message);
-        }
-        defaultGetUser();
-        onDrawerClose();
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  const handleDeleteUserCancel = (e) => {
-    console.log(e);
-    message.success("You didn`t delete the user");
-  };
+  //   try {
+  //     _handleUseractivation(email, !isActive).then((response) => {
+  //       if (response.result === "Success" && response.status == 200) {
+  //         message.success(response.message);
+  //       } else {
+  //         message.error(response.message);
+  //       }
+  //       defaultGetUser();
+  //       onDrawerClose();
+  //     });
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
+  // const handleDeleteUserCancel = (e) => {
+  //   console.log(e);
+  //   message.success("You didn`t delete the user");
+  // };
 
   const showDrawer = (row) => {
     setDrawerVisible(true);
-    setSelectedUser(row);
+    console.log(row);
+    setSelectedLead(row);
   };
 
   const onDrawerClose = () => {
@@ -243,24 +228,24 @@ let leadValues:any = {};
 
       <Table columns={columns} dataSource={allLeads} onChange={onChange} />
       <Drawer
-        title={selectedUser.firstname + " " + selectedUser.lastname}
+        title={selectedLead.firstname + " " + selectedLead.lastname}
         placement="right"
         closable={false}
         onClose={onDrawerClose}
         visible={drawerVisible}
         className={"userDrawer"}
       >
-        <div className="drawerInfo" id={selectedUser.email}>
-          <label>Email: {selectedUser.email}</label>
-          <label>First Name: {selectedUser.firstname}</label>
-          <label>Last Name: {selectedUser.lastname}</label>
-          <label>Phone Number: {selectedUser.mobile}</label>
-          <label>Role: {selectedUser.role}</label>
+        <div className="drawerInfo" id={selectedLead.email}>
+          <label>Email: {selectedLead.email}</label>
+          <label>First Name: {selectedLead.firstname}</label>
+          <label>Last Name: {selectedLead.lastname}</label>
+          <label>Phone Number: {selectedLead.mobile}</label>
+          <label>Role: {selectedLead.role}</label>
           <label>
-            Managed by: {selectedUser.createdByName},{" "}
-            {selectedUser.createdByRole}
+            Managed by: {selectedLead.createdByName},{" "}
+            {selectedLead.createdByRole}
           </label>
-          <div className="drawerGroupedBtns">
+          {/* <div className="drawerGroupedBtns">
             {
               <Popconfirm
                 title="Are you sure to delete this user?"
@@ -274,13 +259,13 @@ let leadValues:any = {};
                 </Button>
               </Popconfirm>
             }
-            {selectedUser.isActive ? (
+            {selectedLead.isActive ? (
               <Button
                 danger
                 onClick={() =>
                   handleUserActivationStatus(
-                    selectedUser.email,
-                    selectedUser.isActive
+                    selectedLead.email,
+                    selectedLead.isActive
                   )
                 }
               >
@@ -291,15 +276,15 @@ let leadValues:any = {};
                 type="primary"
                 onClick={() =>
                   handleUserActivationStatus(
-                    selectedUser.email,
-                    selectedUser.isActive
+                    selectedLead.email,
+                    selectedLead.isActive
                   )
                 }
               >
                 Activate
               </Button>
             )}
-          </div>
+          </div> */}
         </div>
       </Drawer>
       <Modal
@@ -308,6 +293,7 @@ let leadValues:any = {};
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null}
+        width={1000}
       >
         {waiting && (
           <div style={{ textAlign: "center" }}>
@@ -317,15 +303,28 @@ let leadValues:any = {};
         )}
 
         {
+          <>
           <Form
             name="basic"
             labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            wrapperCol={{ span: 12 }}
             initialValues={{ remember: true }}
             onFinish={onNewLead}
             autoComplete="off"
             form={form}
+            
           >
+            <Row>
+              <Col span={12}>
+              <Form.Item
+              label="Enter firstname"
+              name="firstname"
+              rules={[
+                { required: true, message: "Please input lead firstname!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
              <Form.Item
               label="Enter company"
               name="company"
@@ -336,45 +335,64 @@ let leadValues:any = {};
               <Input />
             </Form.Item>
 
-            <Form.Item
-              label="Enter firstname"
-              name="firstname"
-              rules={[
-                { required: true, message: "Please input lead firstname!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Enter lastname"
-              name="lastname"
-              rules={[
-                { required: true, message: "Please input lead lastname!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Enter email"
-              name="email"
-              rules={[
-                {
-                  type: "email",
-                  required: true,
-                  message: "Please input lead email!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
+           
             <Form.Item
               label="Enter phonenumber"
               name="mobile"
               rules={[
                 { required: true, message: "Please input your phonenumber!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Enter website"
+              name="website"
+              rules={[
+                { required: true, message: "Please input your website!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Enter leadsource"
+              name="leadsource"
+              rules={[
+                { required: true, message: "Please input your leadsource!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Enter industry"
+              name="industry"
+              rules={[
+                { required: true, message: "Please input your industry!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Enter notes"
+              name="description"
+              rules={[
+                { required: false, message: "Please input your notes!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            
+            </Col>
+
+{/* second col */}
+            <Col span={12}>
+            <Form.Item
+              label="Enter lastname"
+              name="lastname"
+              rules={[
+                { required: true, message: "Please input lead lastname!" },
               ]}
             >
               <Input />
@@ -393,11 +411,16 @@ let leadValues:any = {};
 
 
 
+
             <Form.Item
-              label="Enter website"
-              name="website"
+              label="Enter email"
+              name="email"
               rules={[
-                { required: true, message: "Please input your website!" },
+                {
+                  type: "email",
+                  required: true,
+                  message: "Please input lead email!",
+                },
               ]}
             >
               <Input />
@@ -411,16 +434,25 @@ let leadValues:any = {};
             >
               <Input />
             </Form.Item>
-
             <Form.Item
-              label="Enter notes"
-              name="description"
+              label="Enter leadstage"
+              name="leadstage"
               rules={[
-                { required: false, message: "Please input your notes!" },
+                { required: false, message: "Please input lead stage!" },
               ]}
             >
               <Input />
             </Form.Item>
+            <Form.Item
+              label="Enter leadowner"
+              name="leadowner"
+              rules={[
+                { required: false, message: "Please input lead owner!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            </Col>
 
             {/* <Form.Item label="Select role" name="role">
               <Select>
@@ -436,7 +468,10 @@ let leadValues:any = {};
                 Submit
               </Button>
             </Form.Item>
+            </Row>
           </Form>
+         
+          </>
         }
       </Modal>
     </>
