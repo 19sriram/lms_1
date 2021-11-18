@@ -23,7 +23,7 @@ export const ShowLeadInfo = (props:any)=>{
             <div className="drawerInfo" id={selectedLead.email}>
               <label>Email: </label>
               <span>{selectedLead.email}</span>
-              <label>First Name: {selectedLead.firstName}</label>
+              <label>First Name:</label><span> {selectedLead.firstName}</span>
               <label>Last Name: {selectedLead.lastName}</label>
               <label>Phone Number: {selectedLead.phone}</label>
               <label>Role: {selectedLead.title}</label>

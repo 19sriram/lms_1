@@ -16,23 +16,23 @@ export const _leadIndustries = [
 export const _links = [
   {
     to: "/dashboard",
-    isAllowed: "ADMIN,CEO,Executive",
+    isAllowed: "ADMIN,CEO,Executive,Ghost",
     name:'Dashboard'
   },
   {
     to: "/users",
-    isAllowed: "ADMIN,CEO",
+    isAllowed: "ADMIN,CEO,Ghost",
     name:'Users'
   },
   {
     to: "/roles",
-    isAllowed: "ADMIN,CEO",
+    isAllowed: "ADMIN,CEO,Ghost",
     name:'Roles',
     
   },
   {
     to: "/leads",
-    isAllowed: "ADMIN,CEO,Executive",
+    isAllowed: "ADMIN,CEO,Executive,Ghost",
     name:'Leads'
   },
 ];

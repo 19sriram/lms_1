@@ -21,3 +21,8 @@
 .userDrawer .ant-drawer-content-wrapper {
     width: 30% !important;
 }
+
+.disabled-row {
+    pointer-events: none;
+    opacity: 0.5;
+}

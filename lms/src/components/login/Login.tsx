@@ -68,7 +68,7 @@ export const LoginComponent = () => {
                 message: "Please input your username!",
               },
             ]}
-            initialValue={'19sriram@gmail.com'}
+            initialValue={'sriram@google.com'}
           >
             <Input />
           </Form.Item>

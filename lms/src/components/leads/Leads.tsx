@@ -25,7 +25,7 @@ import ShowLeadInfo from "./showLeadInfo";
 const { Search } = Input;
 
 
-const LeadsComponent = () => {
+const LeadsComponent = (props) => {
   const [allLeads, setAllLeads] = useState([]);
   const [selectedLead, setSelectedLead]: any = useState([]);
   const [allRoles, setAllRoles] = useState([]);
@@ -37,6 +37,7 @@ const LeadsComponent = () => {
   const { TextArea } = Input;
   useEffect(() => {
     try {
+
       _getLeads().then((response) => {
         setAllLeads(response.data);
       });
@@ -192,7 +193,8 @@ const LeadsComponent = () => {
         />
       </div>
 
-      <Table columns={columns} dataSource={allLeads}  />
+      <Table columns={columns} dataSource={allLeads} 
+       />
      <ShowLeadInfo selectedLead={selectedLead} drawerVisible={drawerVisible} onDrawerClose={onDrawerClose}/>
       
       <Modal

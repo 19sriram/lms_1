@@ -246,7 +246,10 @@ const UsersComponent = () => {
         />
       </div>
 
-      <Table columns={columns} dataSource={allUsers} onChange={onChange} />
+      <Table columns={columns} dataSource={allUsers} onChange={onChange} 
+      rowClassName={allUsers =>  allUsers.email===sessionStorage.getItem('email')?"disabled-row":''}
+
+      />
       <Drawer
         title={selectedUser.firstname + " " + selectedUser.lastname}
         placement="right"
