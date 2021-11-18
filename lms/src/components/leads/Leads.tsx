@@ -1,4 +1,3 @@
-import { CheckCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import {
   Table,
   Input,
@@ -6,11 +5,7 @@ import {
   Modal,
   Spin,
   Form,
-  Select,
-  message,
-  Popconfirm,
-  Row,
-  Col,
+  message
 } from "antd";
 import { Drawer, Button } from "antd";
 import { useEffect, useState } from "react";
@@ -22,9 +17,13 @@ import {
   _getLeads,
   _handleUseractivation,
 } from "./api";
+import { _leadIndustries, _leadStatus } from "../common/const";
 import "./Leads.css";
+import { AddLeadComponent } from "./addLead";
+import ShowLeadInfo from "./showLeadInfo";
 
 const { Search } = Input;
+
 
 const LeadsComponent = () => {
   const [allLeads, setAllLeads] = useState([]);
@@ -33,37 +32,14 @@ const LeadsComponent = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [waiting, setWaiting] = useState(false);
-  const { Option } = Select;
+
   const [form] = Form.useForm();
-  const {TextArea} = Input;
+  const { TextArea } = Input;
   useEffect(() => {
     try {
-      let executiveValues:any = getDecodedToken();
-      
       _getLeads().then((response) => {
         setAllLeads(response.data);
       });
-      
-let leadValues:any = {};
-      let leadInfo = {
-        'leadOwner': executiveValues.firstname,
-        'owneremail': executiveValues.email,
-        'createdById': executiveValues.id,
-        'createdByRole': executiveValues.role,
-        'createdByName': executiveValues.firstname,
-        'company': leadValues.company,
-        'firstname': leadValues.firstname,
-        'lastname': leadValues.lastname,
-        'title': leadValues.title,
-        'email': leadValues.email,
-        'phone': leadValues.phone,
-        'website': leadValues.website,
-        'leadSource': leadValues.leadSource,
-        'industry': leadValues.industry,
-        'address': leadValues.address,
-        'description': leadValues.description
-      }
-
     } catch (e) {
       console.error(e);
     }
@@ -112,16 +88,14 @@ let leadValues:any = {};
       email: values.email,
       phone: values.mobile,
       website: values.website,
-      leadSource: 'portal',
-      industry:'configured',
+      leadSource: "portal",
+      industry: values.leadindustry,
       address: values.address,
       description: values.description,
       createdById: adminDetails.id,
       createdByRole: adminDetails.role,
-      createdByName: adminDetails.firstname
+      createdByName: adminDetails.firstname,
     };
-
-
     try {
       _addLead(userInfo).then((response) => {
         if (response.result === "Success" && response.status == 200) {
@@ -138,39 +112,30 @@ let leadValues:any = {};
     }
   };
 
-
-
-  // const handleUserActivationStatus = (email, isActive) => {
-    
-  //   try {
-  //     _handleUseractivation(email, !isActive).then((response) => {
-  //       if (response.result === "Success" && response.status == 200) {
-  //         message.success(response.message);
-  //       } else {
-  //         message.error(response.message);
-  //       }
-  //       defaultGetUser();
-  //       onDrawerClose();
-  //     });
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-  // const handleDeleteUserCancel = (e) => {
-  //   console.log(e);
-  //   message.success("You didn`t delete the user");
-  // };
-
   const showDrawer = (row) => {
+    setSelectedLead(row);
     setDrawerVisible(true);
     console.log(row);
-    setSelectedLead(row);
   };
 
   const onDrawerClose = () => {
     setDrawerVisible(false);
   };
 
+  useEffect(() => {
+    selectedLead?.status_history?.map((item) => {
+      console.log(
+        item.status +
+          " by " +
+          item.createdByName +
+          " , " +
+          item.createdByRole +
+          " on " +
+          item.date
+      );
+    });
+  }, [selectedLead]);
+  
   const columns = [
     {
       title: "First Name",
@@ -196,12 +161,12 @@ let leadValues:any = {};
     {
       title: "Lead Owner",
       dataIndex: "createdByName",
-    }
+    },
+    {
+      title: "Status",
+      dataIndex: "",
+    },
   ];
-
-  function onChange(pagination, filters, sorter, extra) {
-    console.log("params", pagination, filters, sorter, extra);
-  }
 
   return (
     <>
@@ -210,6 +175,7 @@ let leadValues:any = {};
         title="Leads"
         subTitle="Manage leads and activities in this page"
       />
+
       <div className="usersOptions">
         <Button
           onClick={handleNewUserAddition}
@@ -226,67 +192,9 @@ let leadValues:any = {};
         />
       </div>
 
-      <Table columns={columns} dataSource={allLeads} onChange={onChange} />
-      <Drawer
-        title={selectedLead.firstname + " " + selectedLead.lastname}
-        placement="right"
-        closable={false}
-        onClose={onDrawerClose}
-        visible={drawerVisible}
-        className={"userDrawer"}
-      >
-        <div className="drawerInfo" id={selectedLead.email}>
-          <label>Email: {selectedLead.email}</label>
-          <label>First Name: {selectedLead.firstname}</label>
-          <label>Last Name: {selectedLead.lastname}</label>
-          <label>Phone Number: {selectedLead.mobile}</label>
-          <label>Role: {selectedLead.role}</label>
-          <label>
-            Managed by: {selectedLead.createdByName},{" "}
-            {selectedLead.createdByRole}
-          </label>
-          {/* <div className="drawerGroupedBtns">
-            {
-              <Popconfirm
-                title="Are you sure to delete this user?"
-                onConfirm={handleDeleteUser}
-                onCancel={handleDeleteUserCancel}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Button danger type="primary">
-                  Delete User
-                </Button>
-              </Popconfirm>
-            }
-            {selectedLead.isActive ? (
-              <Button
-                danger
-                onClick={() =>
-                  handleUserActivationStatus(
-                    selectedLead.email,
-                    selectedLead.isActive
-                  )
-                }
-              >
-                Deactivate
-              </Button>
-            ) : (
-              <Button
-                type="primary"
-                onClick={() =>
-                  handleUserActivationStatus(
-                    selectedLead.email,
-                    selectedLead.isActive
-                  )
-                }
-              >
-                Activate
-              </Button>
-            )}
-          </div> */}
-        </div>
-      </Drawer>
+      <Table columns={columns} dataSource={allLeads}  />
+     <ShowLeadInfo selectedLead={selectedLead} drawerVisible={drawerVisible} onDrawerClose={onDrawerClose}/>
+      
       <Modal
         title="Add new lead"
         visible={isModalVisible}
@@ -297,182 +205,11 @@ let leadValues:any = {};
       >
         {waiting && (
           <div style={{ textAlign: "center" }}>
-            {" "}
-            <Spin />{" "}
+            <Spin />
           </div>
         )}
 
-        {
-          <>
-          <Form
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 12 }}
-            initialValues={{ remember: true }}
-            onFinish={onNewLead}
-            autoComplete="off"
-            form={form}
-            
-          >
-            <Row>
-              <Col span={12}>
-              <Form.Item
-              label="Enter firstname"
-              name="firstname"
-              rules={[
-                { required: true, message: "Please input lead firstname!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-             <Form.Item
-              label="Enter company"
-              name="company"
-              rules={[
-                { required: true, message: "Please input lead company!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-           
-            <Form.Item
-              label="Enter phonenumber"
-              name="mobile"
-              rules={[
-                { required: true, message: "Please input your phonenumber!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Enter website"
-              name="website"
-              rules={[
-                { required: true, message: "Please input your website!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="Enter leadsource"
-              name="leadsource"
-              rules={[
-                { required: true, message: "Please input your leadsource!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Enter industry"
-              name="industry"
-              rules={[
-                { required: true, message: "Please input your industry!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Enter notes"
-              name="description"
-              rules={[
-                { required: false, message: "Please input your notes!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            
-            </Col>
-
-{/* second col */}
-            <Col span={12}>
-            <Form.Item
-              label="Enter lastname"
-              name="lastname"
-              rules={[
-                { required: true, message: "Please input lead lastname!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-
-            <Form.Item
-              label="Enter title"
-              name="title"
-              rules={[
-                { required: true, message: "Please input lead title!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-
-
-
-            <Form.Item
-              label="Enter email"
-              name="email"
-              rules={[
-                {
-                  type: "email",
-                  required: true,
-                  message: "Please input lead email!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Enter address"
-              name="address"
-              rules={[
-                { required: false, message: "Please input your address!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Enter leadstage"
-              name="leadstage"
-              rules={[
-                { required: false, message: "Please input lead stage!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Enter leadowner"
-              name="leadowner"
-              rules={[
-                { required: false, message: "Please input lead owner!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            </Col>
-
-            {/* <Form.Item label="Select role" name="role">
-              <Select>
-                {allRoles &&
-                  allRoles.map((item: any) => {
-                    return <Option value={item.role}>{item.role}</Option>;
-                  })}
-              </Select>
-            </Form.Item> */}
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
-            </Row>
-          </Form>
-         
-          </>
-        }
+        {<AddLeadComponent onNewLead={onNewLead} />}
       </Modal>
     </>
   );

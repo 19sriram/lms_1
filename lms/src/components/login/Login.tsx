@@ -4,6 +4,9 @@ import { useHistory } from "react-router-dom";
 import { jwtDecoder } from "../common/axios";
 import { _loginHandler } from "./api";
 import { ForgotPwdComponent } from "./Forgotpwd";
+
+import auth from '../common/auth';
+
 import "./Login.css";
 
 export const LoginComponent = () => {
@@ -18,12 +21,13 @@ export const LoginComponent = () => {
     let response = await _loginHandler({ username, password });
     let { status, result, accessToken } = response;
     if (result === "Success" && status == 200) {
+      
       localStorage.setItem("accessToken", accessToken);
-      jwtDecoder(localStorage.getItem('accessToken'));
-      sessionStorage.setItem('token', JSON.stringify({...jwtDecoder(localStorage.getItem('accessToken'))}));
-      sessionStorage.setItem('email',JSON.parse(sessionStorage.token).email);
-      sessionStorage.setItem('username',JSON.parse(sessionStorage.token).firstname);
-     history.push('/mainPage');
+      auth.login(()=>{
+        history.push('/layout');
+      });
+
+      
     } else {
       let errorMsg = response.message;
       message.error(errorMsg);
@@ -64,6 +68,7 @@ export const LoginComponent = () => {
                 message: "Please input your username!",
               },
             ]}
+            initialValue={'19sriram@gmail.com'}
           >
             <Input />
           </Form.Item>
@@ -77,8 +82,9 @@ export const LoginComponent = () => {
                 message: "Please input your password!",
               },
             ]}
+            initialValue={'Admin@123'}
           >
-            <Input.Password />
+            <Input.Password  />
           </Form.Item>
 
           <Form.Item

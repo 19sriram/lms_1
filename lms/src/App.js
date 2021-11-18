@@ -1,5 +1,5 @@
 
-import SiderComponent from './components/layout/Layout';
+import LayoutComp from './components/layout/Layout';
 import { useHistory } from 'react-router-dom';
 
 import './App.css';
